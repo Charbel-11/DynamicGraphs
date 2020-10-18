@@ -1,0 +1,6 @@
+*.suo
+*.user
+*.ncb
+.vs/
+Debug/
+Release/
