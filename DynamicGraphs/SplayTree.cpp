@@ -11,7 +11,7 @@ struct SplayTree {
 		array<Node*, 2> child{};
 		Node* parent = nullptr;
 		int value;
-		Node(int value) : value(value) {}
+		Node(int value) : value(value){}
 		Node*& next(Node* other) {
 			return child[value < other->value];
 		}
@@ -66,9 +66,8 @@ struct SplayTree {
 	}
 
 	Node* search(int x) {
-		Node* node = new Node(x);
-		if (!node) return nullptr;
-		Node* cur = root;
+		Node* node = new Node(x), * cur = root;
+		if (!root) return nullptr;
 		while (cur) {
 			if (cur->equals(node)) return splay(cur);
 			else if (!cur->next(node)) {
@@ -83,7 +82,6 @@ struct SplayTree {
 
 	Node* splay(Node* node) {
 		return root = node->splay();
-		//return node;
 	}
 
 	vector<int> inorder() {
