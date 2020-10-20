@@ -4,6 +4,7 @@
 #include<stack>
 #include<string>
 #include<vector>
+#include <algorithm>
 using namespace std;
 
 struct SplayTree {
@@ -11,6 +12,7 @@ struct SplayTree {
 		array<Node*, 2> child{};
 		Node* parent = nullptr;
 		int value;
+
 		Node(int value) : value(value){}
 		Node*& next(Node* other) {
 			return child[value < other->value];
@@ -31,10 +33,10 @@ struct SplayTree {
 			return this;
 		}
 		Node* rotate() {
-			int side = getSide(),  parentSide = parent->getSide();
+			bool side = getSide(),  parentSide = parent->getSide();
 			auto ancestor = parent->parent;
-			parent->attach(child[1 - side], side);
-			attach(parent, 1 - side);
+			parent->attach(child[!side], side);
+			attach(parent, !side);
 			if (ancestor) ancestor->attach(this, parentSide);
 			else parent = nullptr;
 			return this;
@@ -84,6 +86,16 @@ struct SplayTree {
 		return root = node->splay();
 	}
 
+	//Erase x from the splay tree
+	void erase(Node* x) {
+		if (!x) { return; }
+		x->splay();
+		Node* lChild = x->child[0], *rChild = x->child[1];
+		lChild->parent = rChild->parent = nullptr;
+		root = join(lChild, rChild);
+		delete x;
+	}
+
 	vector<int> inorder() {
 		vector<int> ans;
 		stack<Node*> st;
@@ -96,6 +108,29 @@ struct SplayTree {
 			while (cur) st.push(cur), cur = cur->child[0];
 		}
 		return ans;
+	}
+
+private:
+	//Finds the node with max value in the subtree of x
+	Node* findMax(Node* x) {
+		if (!x) { return nullptr; }
+		while (x->child[1]) { x = x->child[1]; }
+		return x->splay();
+	}
+	//Finds the node with min value in the subtree of x
+	Node* findMin(Node* x) {
+		if (!x) { return nullptr; }
+		while (x->child[0]) { x = x->child[0]; }
+		return x->splay();
+	}
+	//Joins 2 splay trees rooted at a and b, assumes that all values in a are smaller than all values in b
+	Node* join(Node* a, Node* b) {
+		if (!a && !b) { return nullptr; }
+		if (!a) { b->parent = nullptr; return b; }
+		if (!b) { a->parent = nullptr; return a; }
+		Node* newRoot = findMax(a);
+		newRoot->attach(b, 1);
+		return newRoot;
 	}
 };
 
