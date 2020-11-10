@@ -138,7 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Order statistic set.cpp" />
+    <ClCompile Include="SplayTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />
