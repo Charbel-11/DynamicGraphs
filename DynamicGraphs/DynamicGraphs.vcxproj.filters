@@ -18,7 +18,7 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SDITSBST.cpp">
+    <ClCompile Include="Order statistic set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
