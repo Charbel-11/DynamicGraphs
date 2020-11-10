@@ -11,9 +11,9 @@ struct SplayTree {
 	struct Node {
 		array<Node*, 2> child{};
 		Node* parent = nullptr;
-		int value;
+		int  value, subtreeSize;
 
-		Node(int value) : value(value){}
+		Node(int  value) : value(value), subtreeSize(1) {}
 		Node*& next(Node* other) {
 			return child[value < other->value];
 		}
@@ -33,7 +33,7 @@ struct SplayTree {
 			return this;
 		}
 		Node* rotate() {
-			bool side = getSide(),  parentSide = parent->getSide();
+			bool side = getSide(), parentSide = parent->getSide();
 			auto ancestor = parent->parent;
 			parent->attach(child[!side], side);
 			attach(parent, !side);
@@ -41,10 +41,14 @@ struct SplayTree {
 			else parent = nullptr;
 			return this;
 		}
-		Node* attach(Node* node, int side) {
+		Node* attach(Node* node, int  side) {
 			if (node) node->parent = this;
 			child[side] = node;
+			update();
 			return this;
+		}
+		void update() {
+			subtreeSize = 1 + (child[0] ? child[0]->subtreeSize : 0) + (child[1] ? child[1]->subtreeSize : 0);
 		}
 	};
 
@@ -53,10 +57,13 @@ struct SplayTree {
 
 	Node* insert(int x) {
 		Node* node = new Node(x);
-		assert(node);
 		if (!root) return root = node;
 		Node* cur = root;
 		while (true) {
+			// if no repetition allowed
+			/*if (cur->equals(node)) {
+				return splay(cur);
+			}*/
 			auto &child = cur->next(node);
 			if (!child) {
 				child = node;
@@ -67,33 +74,54 @@ struct SplayTree {
 		}
 	}
 
-	Node* search(int x) {
+	Node* find(int  x) {
 		Node* node = new Node(x), * cur = root;
-		if (!root) return nullptr;
 		while (cur) {
-			if (cur->equals(node)) return splay(cur);
+			if (cur->equals(node)) {
+				break;
+			}
 			else if (!cur->next(node)) {
 				splay(cur);
-				return nullptr;
 			}
-			else {
-				cur = cur->next(node);
-			}
+			cur = cur->next(node);
 		}
+		delete node;
+		return splay(cur);
 	}
 
 	Node* splay(Node* node) {
-		return root = node->splay();
+		return node ? root = node->splay() : nullptr;
 	}
 
 	//Erase x from the splay tree
 	void erase(Node* x) {
 		if (!x) { return; }
-		x->splay();
-		Node* lChild = x->child[0], *rChild = x->child[1];
-		lChild->parent = rChild->parent = nullptr;
+		splay(x);
+		Node* lChild = x->child[0], * rChild = x->child[1];
+		if (lChild) lChild->parent = nullptr;
+		if (rChild) rChild->parent = nullptr;
 		root = join(lChild, rChild);
 		delete x;
+	}
+
+	Node* kth(int k) {
+		Node* cur = root, * ans = nullptr;
+		while (cur) {
+			int leftSize = (cur->child[0] ? cur->child[0]->subtreeSize : 0);
+			if (leftSize == k - 1) {
+				ans = cur;
+				return splay(ans);
+			}
+			else if (leftSize >= k) cur = cur->child[0];
+			else {
+				k -= (leftSize + 1);
+				if (!cur->child[1]) {
+					splay(cur);
+					return ans;
+				}
+				cur = cur->child[1];
+			}
+		}
 	}
 
 	vector<int> inorder() {
@@ -143,7 +171,7 @@ int main() {
 		splayTree.insert(v.back());
 	}
 	cout << "done inserting\n";
-	for (auto& it : v) assert(splayTree.search(it));
+	for (auto& it : v) assert(splayTree.find(it));
 	sort(v.begin(), v.end());
 	vector<int> inorder = splayTree.inorder();
 	assert(inorder == v);
