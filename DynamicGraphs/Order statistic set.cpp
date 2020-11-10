@@ -84,6 +84,7 @@ struct SplayTree {
 			}
 			cur = cur->next(node);
 		}
+		//sss
 		delete node;
 		return splay(cur);
 	}
