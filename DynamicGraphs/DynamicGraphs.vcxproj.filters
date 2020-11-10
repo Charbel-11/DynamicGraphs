@@ -18,7 +18,7 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SplayTree.cpp">
+    <ClCompile Include="SDITSBST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
