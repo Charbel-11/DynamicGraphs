@@ -85,28 +85,34 @@ struct LinkCutTree {
 		return u;
 	}
 
+	Node* LCA(Node* u, Node* v) {
+		if (findRoot(u) != findRoot(v)) { return nullptr; }
+		access(u);
+		return access(v);
+	}
+
 	int pathAggregate(Node* u) {
 		access(u);
 		return u->val->subtreeSize;
 	}
 
 private:
-	void access(Node* u) {
-		Node* cur = u;
-		cur->splay();
-		detachChild(cur, 1);
+	//Returns the last path Parent Pointer
+	Node* access(Node* u) {
+		u->splay();
+		detachChild(u, 1);
 
-		Node* curPP = cur->pathParentPointer;
-		while (curPP) {
+		Node* curPP = u;
+		while (u->pathParentPointer) {
+			curPP = u->pathParentPointer;
 			curPP->splay();
 			detachChild(curPP, 1);
-			curPP->attach(cur, 1);
-			cur->pathParentPointer = nullptr;
-			cur = curPP;
-			curPP = cur->pathParentPointer;
+			curPP->attach(u, 1);
+			u->pathParentPointer = nullptr;
+			u->splay();
 		}
 
-		u->splay();
+		return curPP;
 	}
 
 	void detachChild(Node* u, bool b) {

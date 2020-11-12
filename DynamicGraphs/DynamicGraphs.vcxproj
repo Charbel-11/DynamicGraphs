@@ -144,8 +144,7 @@
     <ClInclude Include="SplayTree.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LCT.cpp" />
-    <ClCompile Include="LinkCutTree.cpp" />
+    <ClCompile Include="Link Cut Tree.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
