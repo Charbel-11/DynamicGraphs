@@ -51,7 +51,6 @@ struct SplayNode {
 	}
 };
 struct SplayTree {
-	SplayTree* pathParentPointer = nullptr;
 	SplayNode* root = nullptr;
 	SplayTree() {}
 
