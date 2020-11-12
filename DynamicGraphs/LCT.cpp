@@ -91,7 +91,8 @@ struct LinkCutTree {
 	}
 
 private:
-	void access(Node* cur) {
+	void access(Node* u) {
+		Node* cur = u;
 		cur->splay();
 		detachChild(cur, 1);
 
@@ -101,11 +102,11 @@ private:
 			detachChild(curPP, 1);
 			curPP->attach(cur, 1);
 			cur->pathParentPointer = nullptr;
-			cur->splay();
-
 			cur = curPP;
 			curPP = cur->pathParentPointer;
 		}
+
+		u->splay();
 	}
 
 	void detachChild(Node* u, bool b) {
