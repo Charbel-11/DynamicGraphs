@@ -17,4 +17,12 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LinkCutTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SplayTree.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
