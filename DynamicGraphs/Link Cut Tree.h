@@ -1,4 +1,3 @@
-#include<iostream>
 #include<array>
 #include<assert.h>
 #include<stack>
@@ -57,12 +56,8 @@ struct Node {
 };
 
 struct LinkCutTree {
-	Node* createNode(NodeVal* val){
-		return new Node(val);
-	}
-
 	//Assumes child is a root in the represented tree
-	void link(Node* child, Node* parent) {
+	void link(Node* parent, Node* child) {
 		assert(findRoot(child) != findRoot(parent));
 		access(child); access(parent);
 		assert(!child->child[0] && !child->child[0]);
