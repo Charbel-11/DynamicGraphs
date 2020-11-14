@@ -141,15 +141,10 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <ClCompile Include="LinkCutTree.cpp" />
-    <ClCompile Include="SplayTree.h" />
-=======
     <ClInclude Include="SplayTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Link Cut Tree.cpp" />
->>>>>>> 15d02e120b0502297e050a4414a2f2fc403484e1
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
