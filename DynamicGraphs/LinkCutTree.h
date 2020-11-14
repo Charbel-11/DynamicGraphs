@@ -7,12 +7,7 @@
 using namespace std;
 
 struct NodeVal {
-	int subtreeSize;
-	NodeVal(): subtreeSize(1) {}
-
-	void update(NodeVal* lChild, NodeVal* rChild) {
-		subtreeSize = 1 + (lChild ? lChild->subtreeSize : 0) + (rChild ? rChild->subtreeSize : 0);
-	}
+	virtual void update(NodeVal* lChild, NodeVal* rChild) = 0;
 };
 
 struct Node {
@@ -86,9 +81,9 @@ struct LinkCutTree {
 		return access(v);
 	}
 
-	int pathAggregate(Node* u) {
+	Node* pathAggregate(Node* u) {
 		access(u);
-		return u->val->subtreeSize;
+		return u;
 	}
 
 private:

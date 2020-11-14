@@ -1,11 +1,21 @@
 #include<vector>
-#include"Link Cut Tree.h"
+#include"LinkCutTree.h"
 using namespace std;
 
 
+struct MyNodeVal: NodeVal {
+	int subtreeSize;
+	MyNodeVal() : subtreeSize(1) {}
+	void update(NodeVal* lChild, NodeVal* rChild) {
+		auto lChildCasted = ((MyNodeVal*)lChild);
+		auto rChildCasted = ((MyNodeVal*)rChild);
+		subtreeSize = 1 + (lChildCasted ? lChildCasted->subtreeSize : 0) + (rChildCasted ? rChildCasted->subtreeSize : 0);
+	}
+};
+
 struct NodeWithId : Node {
 	int id;
-	NodeWithId(NodeVal* nodeVal, int id) : Node(nodeVal), id(id){}
+	NodeWithId(MyNodeVal* nodeVal, int id) : Node(nodeVal), id(id){}
 };
 
 struct DynamicTreeLCT {
@@ -15,11 +25,12 @@ struct DynamicTreeLCT {
 	DynamicTreeLCT(){}
 
 	// returns Id of newly added node
-	int addNode(NodeVal *nodeVal) {
+	int addNode(MyNodeVal*nodeVal) {
 		nodes.push_back(new NodeWithId(nodeVal, n));
 		return n++;
 	}
 
+	// assuming childId is a root
 	void link(int parentId, int childId) {
 		lct.link(nodes[parentId], nodes[childId]);
 	}
@@ -36,5 +47,11 @@ struct DynamicTreeLCT {
 	int findRoot(int u) {
 		auto res = (NodeWithId*)lct.findRoot(nodes[u]);
 		return res->id;
+	}
+
+	// number of nodes on the path from root to u including u
+	int height(int u) {
+		auto res = (NodeWithId*)lct.pathAggregate(nodes[u]);
+		return 1 + (res->child[0] ? ((MyNodeVal*)res->child[0]->val)->subtreeSize : 0);
 	}
 };

@@ -4,7 +4,7 @@ using namespace std;
 
 void basicConnectivityTest() {
 	DynamicTreeLCT dynamicTree;
-	for (int i = 0; i < 5; i++) dynamicTree.addNode(new NodeVal());
+	for (int i = 0; i < 5; i++) dynamicTree.addNode(new MyNodeVal());
 	for (int i = 0; i < 4; i++) dynamicTree.link(i, i + 1);
 	for (int i = 0; i < 5; i++) {
 		for (int j = i; j < 5; j++) {
@@ -33,6 +33,28 @@ void basicConnectivityTest() {
 			assert(dynamicTree.findRoot(i) == dynamicTree.findRoot(j));
 		}
 	}
+}
+
+void basicHeightTest() {
+	DynamicTreeLCT dynamicTree;
+	for (int i = 0; i < 5; i++) dynamicTree.addNode(new MyNodeVal());
+	for (int i = 0; i < 4; i++) dynamicTree.link(i, i + 1);
+	for (int i = 0; i < 5; i++) {
+		assert(dynamicTree.height(i) == i + 1);
+	}
+	dynamicTree.cut(2);
+	for (int i = 0; i < 2; i++) {
+		assert(dynamicTree.height(i) == i + 1);
+	}
+	for (int i = 2; i < 5; i++) {
+		assert(dynamicTree.height(i) == i - 1);
+	}
+	dynamicTree.link(0, 2);
+	assert(dynamicTree.height(0) == 1);
+	assert(dynamicTree.height(1) == 2);
+	assert(dynamicTree.height(2) == 2);
+	assert(dynamicTree.height(3) == 3);
+	assert(dynamicTree.height(4) == 4);
 }
 
 int main() {

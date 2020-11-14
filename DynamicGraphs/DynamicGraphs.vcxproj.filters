@@ -18,13 +18,13 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Link Cut Tree.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DynamicTreeLCT.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkCutTree.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
