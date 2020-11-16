@@ -141,11 +141,13 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DynamicTreeETT.h" />
     <ClInclude Include="SplayTree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DYNACON1.cpp" />
     <ClCompile Include="DynamicTreeLCT.h" />
+    <ClCompile Include="ImplicitTreap.h" />
     <ClCompile Include="LinkCutTree.h" />
     <ClCompile Include="Sasha and Algorithm of Silence%27s Sounds.cpp" />
     <ClCompile Include="test.cpp" />

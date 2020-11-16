@@ -1,5 +1,6 @@
-#include<iostream>
-#include"DynamicTreeLCT.h"
+#pragma once
+#include <iostream>
+#include "DynamicTreeLCT.h"
 using namespace std;
 
 void basicConnectivityTest() {

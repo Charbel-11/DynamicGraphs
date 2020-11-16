@@ -1,6 +1,7 @@
-#include<vector>
-#include"LinkCutTree.h"
+#pragma once
+#include "LinkCutTree.h"
 #include <iostream>
+#include <vector>
 using namespace std;
 
 

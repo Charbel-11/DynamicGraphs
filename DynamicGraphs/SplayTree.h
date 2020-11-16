@@ -1,8 +1,9 @@
-#include<array>
-#include<assert.h>
-#include<stack>
-#include<string>
-#include<vector>
+#pragma once
+#include <array>
+#include <assert.h>
+#include <stack>
+#include <string>
+#include <vector>
 #include <algorithm>
 using namespace std;
 
