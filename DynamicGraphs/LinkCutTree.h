@@ -15,12 +15,28 @@ struct Node {
 	Node* splayTreeParent = nullptr;
 	Node* pathParentPointer = nullptr;
 	NodeVal* val;
+	bool reverse = false;
 
-	Node(NodeVal* _val) : val(_val) {}
+	Node(NodeVal* _val): val(_val) {}
 	bool getSide() {
 		return splayTreeParent ? splayTreeParent->child[1] == this : false;
 	}
+	void tryReverse() {
+		if (!reverse) { return; }
+		reverse = false;
+		swap(child[0], child[1]);
+		if (child[0]) { child[0]->reverse = !child[0]->reverse; }
+		if (child[1]) { child[1]->reverse = !child[1]->reverse; }
+	}
 	Node* splay() {
+		vector<Node*> ancestors;
+		Node* cur = this;
+		while (cur) { ancestors.push_back(cur); cur = cur->splayTreeParent; }
+		for (int i = ancestors.size() - 1; i >= 0; i--) {
+			if (!ancestors[i]) { continue; }
+			ancestors[i]->tryReverse();
+		}
+
 		while (splayTreeParent) {
 			if (splayTreeParent->splayTreeParent) {
 				(getSide() == splayTreeParent->getSide() ? splayTreeParent : this)->rotate();
@@ -55,7 +71,12 @@ struct LinkCutTree {
 	void link(Node* parent, Node* child) {
 		assert(findRoot(child) != findRoot(parent));
 		access(child); access(parent);
-		assert(!child->child[0] && !child->child[0]);
+
+		Node* lChild = child->child[0];
+		if (lChild) {
+			lChild->reverse = !lChild->reverse;
+			detachChild(child, 0);
+		}
 
 		child->attach(parent, 0);
 	}
@@ -65,6 +86,13 @@ struct LinkCutTree {
 		assert(u->child[0]);
 		u->child[0]->splayTreeParent = nullptr;
 		u->child[0] = nullptr;
+	}
+
+	void cut(Node* u, Node* v) {
+		access(u);
+		if (u->child[0] && findMax(u->child[0]) == v) { cut(u); return; }
+		access(v);
+		if (v->child[0] && findMax(v->child[0]) == u) { cut(v); }
 	}
 
 	//Finds the root of u in the represented tree
@@ -103,6 +131,12 @@ private:
 		}
 
 		return curPP;
+	}
+
+	Node* findMax(Node* u) {
+		while (u && u->child[1]) { u = u->child[1]; }
+		u->splay();
+		return u;
 	}
 
 	void detachChild(Node* u, bool b) {

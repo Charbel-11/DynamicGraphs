@@ -1,5 +1,6 @@
 #include<vector>
 #include"LinkCutTree.h"
+#include <iostream>
 using namespace std;
 
 
@@ -25,7 +26,7 @@ struct DynamicTreeLCT {
 	DynamicTreeLCT(){}
 
 	// returns Id of newly added node
-	int addNode(MyNodeVal*nodeVal) {
+	int addNode(MyNodeVal* nodeVal) {
 		nodes.push_back(new NodeWithId(nodeVal, n));
 		return n++;
 	}
@@ -38,6 +39,10 @@ struct DynamicTreeLCT {
 	void cut(int id) {
 		lct.cut(nodes[id]);
 	}
+	
+	void cut(int u, int v) {
+		lct.cut(nodes[u], nodes[v]);
+	}
 
 	int lca(int u, int v) {
 		auto res = (NodeWithId *)lct.LCA(nodes[u], nodes[v]);
@@ -47,6 +52,10 @@ struct DynamicTreeLCT {
 	int findRoot(int u) {
 		auto res = (NodeWithId*)lct.findRoot(nodes[u]);
 		return res->id;
+	}
+
+	bool connected(int u, int v) {
+		return findRoot(u) == findRoot(v);
 	}
 
 	// number of nodes on the path from root to u including u
