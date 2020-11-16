@@ -144,6 +144,7 @@
     <ClInclude Include="SplayTree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DYNACON1.cpp" />
     <ClCompile Include="DynamicTreeLCT.h" />
     <ClCompile Include="LinkCutTree.h" />
     <ClCompile Include="Sasha and Algorithm of Silence%27s Sounds.cpp" />

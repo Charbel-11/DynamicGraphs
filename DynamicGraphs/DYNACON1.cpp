@@ -67,7 +67,8 @@ struct Node {
 struct LinkCutTreeGeneral {
 	void link(Node* parent, Node* child) {
 		if (!child || !parent) { return; }
-//		while(findRoot(child) == findRoot(parent));
+		if (findRoot(child) == findRoot(parent)) { return; }
+		//		while(findRoot(child) == findRoot(parent));
 		access(child); access(parent);
 
 		Node* lChild = child->child[0];
@@ -89,9 +90,10 @@ struct LinkCutTreeGeneral {
 
 	void cut(Node* u, Node* v) {
 		if (!u || !v) { return; }
-		access(u);
-		if (u->child[0] != nullptr && findMax(u->child[0]) == v) { cut(u); }
-		else if (v->child[0] != nullptr && findMax(v->child[0]) == u) { cut(v); }
+		access(v); access(u);
+		if (u->child[0] != nullptr && findMax(u->child[0]) == v) { cut(u); return; }
+		access(v);
+		if (v->child[0] != nullptr && findMax(v->child[0]) == u) { cut(v); }
 	}
 
 	//Finds the root of u in the represented tree
