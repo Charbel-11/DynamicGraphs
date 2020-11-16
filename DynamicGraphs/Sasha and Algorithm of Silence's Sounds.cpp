@@ -22,8 +22,8 @@ struct StVal {
 struct StUpdate {
 	int v = 0; StUpdate() {}
 	StUpdate(const int v) : v(v) {}
-	StUpdate(const StUpdate& u1, const StUpdate& u2) { v = u1.v + u2.v; }	
-	void apply(StVal& sv, const int lo, const int hi) {	
+	StUpdate(const StUpdate& u1, const StUpdate& u2) { v = u1.v + u2.v; }
+	void apply(StVal& sv, const int lo, const int hi) {
 		sv.minV += v;
 	}
 };
@@ -178,7 +178,7 @@ struct LinkCutTreeGeneral {
 	}
 
 	void cut(Node* u, Node* v) {
-		access(u);
+		access(v); access(u);
 		if (u->child[0] && findMax(u->child[0]) == v) { cut(u); return; }
 		access(v);
 		if (v->child[0] && findMax(v->child[0]) == u) { cut(v); }
@@ -214,7 +214,6 @@ private:
 	Node* findMax(Node* u) {
 		if (!u) { return nullptr; }
 		while (u->child[1]) { u = u->child[1]; }
-		u->splay();
 		return u;
 	}
 
@@ -282,7 +281,7 @@ void cutNeighbors(DynamicTreeLCT& lct, vector<vector<int>>& grid, int l, int r) 
 		if (grid[ni][nj] < l || grid[ni][nj] > r) { continue; }
 
 		int nIdx = numToID[grid[ni][nj]];
-		if (lct.connected(idx, nIdx)) { lct.cut(idx, nIdx); }
+		lct.cut(idx, nIdx);
 	}
 }
 

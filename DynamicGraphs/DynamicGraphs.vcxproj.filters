@@ -30,6 +30,9 @@
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sasha and Algorithm of Silence%27s Sounds.cpp">
+      <Filter>Source Files\Test Problems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SplayTree.h">

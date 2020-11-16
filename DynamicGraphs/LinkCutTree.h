@@ -89,7 +89,7 @@ struct LinkCutTree {
 	}
 
 	void cut(Node* u, Node* v) {
-		access(u);
+		access(v); access(u);
 		if (u->child[0] && findMax(u->child[0]) == v) { cut(u); return; }
 		access(v);
 		if (v->child[0] && findMax(v->child[0]) == u) { cut(v); }

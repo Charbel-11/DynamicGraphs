@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="DynamicTreeLCT.h" />
     <ClCompile Include="LinkCutTree.h" />
+    <ClCompile Include="Sasha and Algorithm of Silence%27s Sounds.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
