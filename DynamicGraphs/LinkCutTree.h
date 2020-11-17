@@ -8,17 +8,22 @@
 using namespace std;
 
 struct NodeVal {
-	virtual void update(NodeVal* lChild, NodeVal* rChild) = 0;
+	int subtreeSize;
+	NodeVal() : subtreeSize(1) {}
+	void update(NodeVal* lChild, NodeVal* rChild) {
+		subtreeSize = 1 + (lChild ? lChild->subtreeSize : 0) + (rChild ? rChild->subtreeSize : 0);
+	}
 };
 
 struct Node {
+	int id;
 	array<Node*, 2> child{};
 	Node* splayTreeParent = nullptr;
 	Node* pathParentPointer = nullptr;
 	NodeVal* val;
 	bool reverse = false;
 
-	Node(NodeVal* _val): val(_val) {}
+	Node(int id, NodeVal* _val): id(id), val(_val) {}
 	bool getSide() {
 		return splayTreeParent ? splayTreeParent->child[1] == this : false;
 	}
@@ -68,9 +73,19 @@ struct Node {
 };
 
 struct LinkCutTree {
+	int n = 0;
+	vector<Node*> nodes;
+	
+	// returns Id of newly added node
+	int addNode(NodeVal* nodeVal) {
+		nodes.push_back(new Node(n, nodeVal));
+		return n++;
+	}
+
 	//Assumes child is a root in the represented tree
-	void link(Node* parent, Node* child) {
-		assert(findRoot(child) != findRoot(parent));
+	void link(int parentId, int childId) {
+		Node* parent = nodes[parentId], *child = nodes[childId];
+		assert(findRoot(child->id) != findRoot(parent->id));
 		access(child); access(parent);
 
 		Node* lChild = child->child[0];
@@ -82,37 +97,46 @@ struct LinkCutTree {
 		child->attach(parent, 0);
 	}
 
-	void cut(Node* u) {
+	void cut(int id) {
+		Node* u = nodes[id];
 		access(u);
 		assert(u->child[0]);
 		u->child[0]->splayTreeParent = nullptr;
 		u->child[0] = nullptr;
 	}
 
-	void cut(Node* u, Node* v) {
+	void cut(int id1, int id2) {
+		Node* u = nodes[id1], * v = nodes[id2];
 		access(v); access(u);
-		if (u->child[0] && findMax(u->child[0]) == v) { cut(u); return; }
+		if (u->child[0] && findMax(u->child[0]) == v) { cut(u->id); return; }
 		access(v);
-		if (v->child[0] && findMax(v->child[0]) == u) { cut(v); }
+		if (v->child[0] && findMax(v->child[0]) == u) { cut(v->id); }
 	}
 
 	//Finds the root of u in the represented tree
-	Node* findRoot(Node* u) {
+	int findRoot(int id) {
+		Node* u = nodes[id];
 		access(u);
 		while (u->child[0]) { u = u->child[0]; }
 		access(u);
-		return u;
+		return u->id;
 	}
 
-	Node* LCA(Node* u, Node* v) {
-		if (findRoot(u) != findRoot(v)) { return nullptr; }
+	int LCA(int id1, int id2) {
+		Node* u = nodes[id1], * v = nodes[id2];
+		if (findRoot(u->id) != findRoot(v->id)) { return -1; }
 		access(u);
-		return access(v);
+		return access(v)->id;
 	}
 
-	Node* pathAggregate(Node* u) {
+	int pathAggregate(int id) {
+		Node* u = nodes[id];
 		access(u);
-		return u;
+		return u->id;
+	}
+
+	Node* getNode(int id) {
+		return nodes[id];
 	}
 
 private:

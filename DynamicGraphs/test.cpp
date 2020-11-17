@@ -1,11 +1,11 @@
 #pragma once
 #include <iostream>
-#include "DynamicTreeLCT.h"
+#include "LinkCutTree.h"
 using namespace std;
 
 void basicConnectivityTest() {
-	DynamicTreeLCT dynamicTree;
-	for (int i = 0; i < 5; i++) dynamicTree.addNode(new MyNodeVal());
+	LinkCutTree dynamicTree;
+	for (int i = 0; i < 5; i++) dynamicTree.addNode(new NodeVal());
 	for (int i = 0; i < 4; i++) dynamicTree.link(i, i + 1);
 	for (int i = 0; i < 5; i++) {
 		for (int j = i; j < 5; j++) {
@@ -36,26 +36,31 @@ void basicConnectivityTest() {
 	}
 }
 
+
 void basicHeightTest() {
-	DynamicTreeLCT dynamicTree;
-	for (int i = 0; i < 5; i++) dynamicTree.addNode(new MyNodeVal());
+	LinkCutTree dynamicTree;
+	for (int i = 0; i < 5; i++) dynamicTree.addNode(new NodeVal());
 	for (int i = 0; i < 4; i++) dynamicTree.link(i, i + 1);
+	auto height = [&](int id) {
+		auto res = dynamicTree.getNode(dynamicTree.pathAggregate(id));
+		return 1 + (res->child[0] ? (res->child[0]->val)->subtreeSize : 0);
+	};
 	for (int i = 0; i < 5; i++) {
-		assert(dynamicTree.height(i) == i + 1);
+		assert(height(i) == i + 1);
 	}
 	dynamicTree.cut(2);
 	for (int i = 0; i < 2; i++) {
-		assert(dynamicTree.height(i) == i + 1);
+		assert(height(i) == i + 1);
 	}
 	for (int i = 2; i < 5; i++) {
-		assert(dynamicTree.height(i) == i - 1);
+		assert(height(i) == i - 1);
 	}
 	dynamicTree.link(0, 2);
-	assert(dynamicTree.height(0) == 1);
-	assert(dynamicTree.height(1) == 2);
-	assert(dynamicTree.height(2) == 2);
-	assert(dynamicTree.height(3) == 3);
-	assert(dynamicTree.height(4) == 4);
+	assert(height(0) == 1);
+	assert(height(1) == 2);
+	assert(height(2) == 2);
+	assert(height(3) == 3);
+	assert(height(4) == 4);
 }
 
 int main() {

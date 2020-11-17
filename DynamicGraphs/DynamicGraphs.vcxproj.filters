@@ -24,30 +24,12 @@
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sasha and Algorithm of Silence%27s Sounds.cpp">
-      <Filter>Source Files\Test Problems</Filter>
-    </ClCompile>
-    <ClCompile Include="ImplicitTreap.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="LinkCutTree.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DynamicTreeLCT.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DYNACON1.cpp">
-      <Filter>Source Files\Test Problems</Filter>
-    </ClCompile>
-    <ClCompile Include="EulerTourTree.h">
       <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SplayTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicTreeETT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
