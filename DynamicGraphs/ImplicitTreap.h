@@ -12,8 +12,8 @@ struct TreapNode {
 	ll val, sum;
 	TreapNode* l, * r, * p;
 
-	TreapNode() {}
 	TreapNode(ll v) :val(v), priority(rand()), l(NULL), r(NULL), p(NULL), size(1), sum(val) {}
+	TreapNode() : TreapNode(0) {}
 
 	void updateSize() {
 		size = 1 + (l ? l->size : 0) + (r ? r->size : 0);
@@ -100,4 +100,11 @@ ll treapRangeQuery(TreapNode*& t, int l, int r) {
 	ll ans = t->sum;
 	treapMerge(mid, L, t); treapMerge(t, mid, R);
 	return ans;
+}
+
+void treapFindIdx(TreapNode*& cur, int& idx) {
+	idx = sz(cur->l); while (cur->p != nullptr) {
+		if (cur->p->l == cur) { cur = cur->p; continue; }
+		idx += 1 + sz(cur->p->l); cur = cur->p;
+	}
 }

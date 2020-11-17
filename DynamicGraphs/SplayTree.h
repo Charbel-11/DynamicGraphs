@@ -161,17 +161,17 @@ private:
 	}
 };
 
-//int main() {
-//	SplayTree splayTree;
-//	int n; cin >> n;
-//	vector<int> v;
-//	for (int i = 0; i < n; i++) {
-//		v.push_back(rand() % 100000);
-//		splayTree.insert(v.back());
-//	}
-//	cout << "done inserting\n";
-//	for (auto& it : v) assert(splayTree.find(it));
-//	sort(v.begin(), v.end());
-//	vector<int> inorder = splayTree.inorder();
-//	assert(inorder == v);
-//}
+/*int main() {
+	SplayTree splayTree;
+	int n; cin >> n;
+	vector<int> v;
+	for (int i = 0; i < n; i++) {
+		v.push_back(rand() % 100000);
+		splayTree.insert(v.back());
+	}
+	cout << "done inserting\n";
+	for (auto& it : v) assert(splayTree.find(it));
+	sort(v.begin(), v.end());
+	vector<int> inorder = splayTree.inorder();
+	assert(inorder == v);
+}*/

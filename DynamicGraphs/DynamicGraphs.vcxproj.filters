@@ -39,6 +39,9 @@
     <ClCompile Include="DYNACON1.cpp">
       <Filter>Source Files\Test Problems</Filter>
     </ClCompile>
+    <ClCompile Include="EulerTourTree.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SplayTree.h">
