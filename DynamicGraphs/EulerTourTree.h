@@ -68,8 +68,10 @@ struct EulerTourTree {
 		TreapNode* childTree = nullptr, * lastRight = nullptr;
 		treapSplit(lastCur, childTree, lastRight, lastIdx);
 
-		//Still need to update first and last...
-
+		if (first[par] == treapFind(firstLeft, firstIdx))
+			first[par] = treapFind(lastRight, 0);
+		treapErase(firstLeft, firstIdx - 1);
+		
 		TreapNode* parentTree = nullptr;
 		treapMerge(parentTree, firstLeft, lastRight);
 	}
@@ -88,5 +90,14 @@ private:
 		while (curN->p != nullptr) curN = curN->p;
 		while (curN->l != nullptr) curN = curN->l;
 		return curN;
+	}
+
+	void reroot(int cur) {
+		TreapNode* firstCur = first[cur]; int idx = 0;
+		treapFindIdx(firstCur, idx);
+		treapErase(firstCur, 0); idx--;
+		TreapNode* left = nullptr, * right = nullptr, * root = nullptr;
+		treapSplit(firstCur, left, right, idx - 1);
+		treapMerge(root, right, left);
 	}
 };

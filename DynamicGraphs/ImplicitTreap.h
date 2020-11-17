@@ -108,3 +108,8 @@ void treapFindIdx(TreapNode*& cur, int& idx) {
 		idx += 1 + sz(cur->p->l); cur = cur->p;
 	}
 }
+
+TreapNode* treapFind(TreapNode* cur, int idx) {
+	int s = sz(cur->l); if (s == idx) { return cur; }
+	return s < idx ? treapFind(cur->r, idx - s - 1) : treapFind(cur->l, idx);
+}
