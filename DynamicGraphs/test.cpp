@@ -65,5 +65,6 @@ void basicHeightTest() {
 
 int main() {
 	basicConnectivityTest();
+	basicHeightTest();
 	cout << "success!\n";
 }
