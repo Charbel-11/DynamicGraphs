@@ -21,9 +21,6 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LinkCutTree.h">
       <Filter>Header Files</Filter>
     </ClCompile>

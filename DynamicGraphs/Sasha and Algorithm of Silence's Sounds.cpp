@@ -101,13 +101,23 @@ struct SegTree {
 
 };
 
+struct NodeVal {
+	int subtreeSize;
+	NodeVal() : subtreeSize(1) {}
+	void update(NodeVal* lChild, NodeVal* rChild) {
+		subtreeSize = 1 + (lChild ? lChild->subtreeSize : 0) + (rChild ? rChild->subtreeSize : 0);
+	}
+};
+
 struct Node {
+	int id;
 	array<Node*, 2> child{};
 	Node* splayTreeParent = nullptr;
 	Node* pathParentPointer = nullptr;
+	NodeVal* val;
 	bool reverse = false;
 
-	Node() {}
+	Node(int id, NodeVal* _val) : id(id), val(_val) {}
 	bool getSide() {
 		return splayTreeParent ? splayTreeParent->child[1] == this : false;
 	}
@@ -135,7 +145,6 @@ struct Node {
 		}
 		return this;
 	}
-
 	Node* rotate() {
 		bool side = getSide(), parentSide = splayTreeParent->getSide();
 		auto ancestor = splayTreeParent->splayTreeParent;
@@ -152,13 +161,25 @@ struct Node {
 	Node* attach(Node* node, int side) {
 		if (node) node->splayTreeParent = this;
 		child[side] = node;
+		val->update((child[0] ? child[0]->val : nullptr), (child[1] ? child[1]->val : nullptr));
 		return this;
 	}
 };
 
-struct LinkCutTreeGeneral {
-	void link(Node* parent, Node* child) {
-		assert(findRoot(child) != findRoot(parent));
+struct LinkCutTree {
+	int n = 0;
+	vector<Node*> nodes;
+
+	// returns Id of newly added node
+	int addNode(NodeVal* nodeVal) {
+		nodes.push_back(new Node(n, nodeVal));
+		return n++;
+	}
+
+	//Assumes child is a root in the represented tree
+	void link(int parentId, int childId) {
+		Node* parent = nodes[parentId], * child = nodes[childId];
+		assert(findRoot(child->id) != findRoot(parent->id));
 		access(child); access(parent);
 
 		Node* lChild = child->child[0];
@@ -170,26 +191,46 @@ struct LinkCutTreeGeneral {
 		child->attach(parent, 0);
 	}
 
-	void cut(Node* u) {
+	void cut(int id) {
+		Node* u = nodes[id];
 		access(u);
 		assert(u->child[0]);
 		u->child[0]->splayTreeParent = nullptr;
 		u->child[0] = nullptr;
 	}
 
-	void cut(Node* u, Node* v) {
+	void cut(int id1, int id2) {
+		Node* u = nodes[id1], * v = nodes[id2];
 		access(v); access(u);
-		if (u->child[0] && findMax(u->child[0]) == v) { cut(u); return; }
+		if (u->child[0] && findMax(u->child[0]) == v) { cut(u->id); return; }
 		access(v);
-		if (v->child[0] && findMax(v->child[0]) == u) { cut(v); }
+		if (v->child[0] && findMax(v->child[0]) == u) { cut(v->id); }
 	}
 
 	//Finds the root of u in the represented tree
-	Node* findRoot(Node* u) {
+	int findRoot(int id) {
+		Node* u = nodes[id];
 		access(u);
 		while (u->child[0]) { u = u->child[0]; }
 		access(u);
-		return u;
+		return u->id;
+	}
+
+	int LCA(int id1, int id2) {
+		Node* u = nodes[id1], * v = nodes[id2];
+		if (findRoot(u->id) != findRoot(v->id)) { return -1; }
+		access(u);
+		return access(v)->id;
+	}
+
+	int pathAggregate(int id) {
+		Node* u = nodes[id];
+		access(u);
+		return u->id;
+	}
+
+	Node* getNode(int id) {
+		return nodes[id];
 	}
 
 private:
@@ -212,8 +253,8 @@ private:
 	}
 
 	Node* findMax(Node* u) {
-		if (!u) { return nullptr; }
-		while (u->child[1]) { u = u->child[1]; }
+		while (u && u->child[1]) { u = u->child[1]; }
+		u->splay();
 		return u;
 	}
 
@@ -225,53 +266,12 @@ private:
 		u->child[b] = nullptr;
 	}
 };
-
-struct NodeWithId : Node {
-	int id;
-	NodeWithId(int id) : Node(), id(id) {}
-};
-
-struct DynamicTreeLCT {
-	LinkCutTreeGeneral lct;
-	vector<NodeWithId*> nodes;
-	int n = 0;
-	DynamicTreeLCT() {}
-
-	// returns Id of newly added node
-	int addNode() {
-		nodes.push_back(new NodeWithId(n));
-		return n++;
-	}
-
-	// assuming childId is a root
-	void link(int parentId, int childId) {
-		lct.link(nodes[parentId], nodes[childId]);
-	}
-
-	void cut(int id) {
-		lct.cut(nodes[id]);
-	}
-
-	void cut(int u, int v) {
-		lct.cut(nodes[u], nodes[v]);
-	}
-
-	int findRoot(int u) {
-		auto res = (NodeWithId*)lct.findRoot(nodes[u]);
-		return res->id;
-	}
-
-	bool connected(int u, int v) {
-		return findRoot(u) == findRoot(v);
-	}
-};
-
 int dx[] = { 0,0,1,-1 };
 int dy[] = { 1,-1,0,0 };
 vector<int> numToID;
 int n, m;
 
-void cutNeighbors(DynamicTreeLCT& lct, vector<vector<int>>& grid, int l, int r) {
+void cutNeighbors(LinkCutTree& lct, vector<vector<int>>& grid, int l, int r) {
 	int i = numToID[l] / m, j = numToID[l] % m;
 	int idx = numToID[l];
 
@@ -289,7 +289,7 @@ int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
 
-	DynamicTreeLCT lct;
+	LinkCutTree lct;
 
 	cin >> n >> m;
 	vector<vector<int>> grid(n, vector<int>(m));
@@ -297,7 +297,7 @@ int main() {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < m; j++) {
 			cin >> grid[i][j];
-			numToID[grid[i][j]] = lct.addNode();
+			numToID[grid[i][j]] = lct.addNode(new NodeVal());
 		}
 	}
 
@@ -316,7 +316,7 @@ int main() {
 			if (grid[ni][nj] < l || grid[ni][nj] > r) { continue; }
 
 			int nIdx = numToID[grid[ni][nj]];
-			while (lct.connected(idx, nIdx)) {
+			while (lct.findRoot(idx) == lct.findRoot(nIdx)) {
 				cutNeighbors(lct, grid, l, r);
 				l++;
 			}
