@@ -29,5 +29,14 @@
     <ClInclude Include="SplayTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicTreeETT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EulerTourTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImplicitTreap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

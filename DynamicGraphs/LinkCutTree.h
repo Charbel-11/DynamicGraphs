@@ -10,6 +10,8 @@ using namespace std;
 struct NodeVal {
 	int subtreeSize;
 	NodeVal() : subtreeSize(1) {}
+	// update should be symmetric with respect to lchild and rchild if we wish to have the ability to link any 2 nodes
+	// i.e. update(x, y) == update(y, x) 
 	void update(NodeVal* lChild, NodeVal* rChild) {
 		subtreeSize = 1 + (lChild ? lChild->subtreeSize : 0) + (rChild ? rChild->subtreeSize : 0);
 	}
@@ -23,11 +25,11 @@ struct Node {
 	NodeVal* val;
 	bool reverse = false;
 
-	Node(int id, NodeVal* _val): id(id), val(_val) {}
+	Node(int id, NodeVal* _val) : id(id), val(_val) {}
 	bool getSide() {
 		return splayTreeParent ? splayTreeParent->child[1] == this : false;
 	}
-	void tryReverse() {
+	void applyReverseLazy() {
 		if (!reverse) { return; }
 		reverse = false;
 		swap(child[0], child[1]);
@@ -35,12 +37,11 @@ struct Node {
 		if (child[1]) { child[1]->reverse = !child[1]->reverse; }
 	}
 	Node* splay() {
-		vector<Node*> ancestors;
+		stack<Node*> ancestors;
 		Node* cur = this;
-		while (cur) { ancestors.push_back(cur); cur = cur->splayTreeParent; }
-		for (int i = ancestors.size() - 1; i >= 0; i--) {
-			if (!ancestors[i]) { continue; }
-			ancestors[i]->tryReverse();
+		while (cur) { ancestors.push(cur); cur = cur->splayTreeParent; }
+		while (ancestors.size()) {
+			ancestors.top()->applyReverseLazy(); ancestors.pop();
 		}
 
 		while (splayTreeParent) {
@@ -70,28 +71,48 @@ struct Node {
 		val->update((child[0] ? child[0]->val : nullptr), (child[1] ? child[1]->val : nullptr));
 		return this;
 	}
+
+	void detachChild(bool b) {
+		if (!child[b]) { return; }
+		child[b]->pathParentPointer = this;
+		child[b]->splayTreeParent = nullptr;
+		child[b] = nullptr;
+	}
+
+	Node* findMax() {
+		return getDeepest(1);
+	}
+
+	Node* findMin() {
+		return getDeepest(0);
+	}
+private:
+	Node* getDeepest(int dir) {
+		Node* u = this; applyReverseLazy();
+		while (u && u->child[dir]) { u = u->child[dir]; u->applyReverseLazy(); }
+		return u->splay();
+	}
 };
 
 struct LinkCutTree {
 	int n = 0;
 	vector<Node*> nodes;
-	
+
 	// returns Id of newly added node
 	int addNode(NodeVal* nodeVal) {
 		nodes.push_back(new Node(n, nodeVal));
 		return n++;
 	}
 
-	//Assumes child is a root in the represented tree
 	void link(int parentId, int childId) {
-		Node* parent = nodes[parentId], *child = nodes[childId];
+		Node* parent = nodes[parentId], * child = nodes[childId];
 		assert(findRoot(child->id) != findRoot(parent->id));
 		access(child); access(parent);
 
 		Node* lChild = child->child[0];
 		if (lChild) {
 			lChild->reverse = !lChild->reverse;
-			detachChild(child, 0);
+			child->detachChild(0);
 		}
 
 		child->attach(parent, 0);
@@ -107,19 +128,18 @@ struct LinkCutTree {
 
 	void cut(int id1, int id2) {
 		Node* u = nodes[id1], * v = nodes[id2];
-		access(v); access(u);
-		if (u->child[0] && findMax(u->child[0]) == v) { cut(u->id); return; }
-		access(v);
-		if (v->child[0] && findMax(v->child[0]) == u) { cut(v->id); }
+		access(u);
+		if (u->child[0] && u->child[0]->findMax() == v) { cut(u->id); }
+		else { cut(v->id); }
 	}
 
 	//Finds the root of u in the represented tree
 	int findRoot(int id) {
 		Node* u = nodes[id];
 		access(u);
-		while (u->child[0]) { u = u->child[0]; }
-		access(u);
-		return u->id;
+		Node* res = u->findMin();
+		access(res);
+		return res->id;
 	}
 
 	int LCA(int id1, int id2) {
@@ -143,32 +163,18 @@ private:
 	//Returns the last path Parent Pointer
 	Node* access(Node* u) {
 		u->splay();
-		detachChild(u, 1);
+		u->detachChild(1);
 
 		Node* curPP = u;
 		while (u->pathParentPointer) {
 			curPP = u->pathParentPointer;
 			curPP->splay();
-			detachChild(curPP, 1);
+			curPP->detachChild(1);
 			curPP->attach(u, 1);
 			u->pathParentPointer = nullptr;
 			u->splay();
 		}
 
 		return curPP;
-	}
-
-	Node* findMax(Node* u) {
-		while (u && u->child[1]) { u = u->child[1]; }
-		u->splay();
-		return u;
-	}
-
-	void detachChild(Node* u, bool b) {
-		if (!u->child[b]) { return; }
-
-		u->child[b]->pathParentPointer = u;
-		u->child[b]->splayTreeParent = nullptr;
-		u->child[b] = nullptr;
 	}
 };
