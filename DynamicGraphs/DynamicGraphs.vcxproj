@@ -141,6 +141,7 @@
     <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DynamicGraphDSU.h" />
     <ClInclude Include="DynamicTreeETT.h" />
     <ClInclude Include="EulerTourTree.h" />
     <ClInclude Include="ImplicitTreap.h" />
