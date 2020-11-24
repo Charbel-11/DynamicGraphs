@@ -148,7 +148,6 @@
     <ClInclude Include="SplayTree.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DYNALCA - Dynamic LCA.cpp" />
     <ClCompile Include="LinkCutTree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

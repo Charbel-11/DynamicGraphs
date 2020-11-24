@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <array>
 #include <assert.h>
 #include <stack>
@@ -8,12 +9,12 @@
 using namespace std;
 
 struct NodeVal {
-	int subtreeSize;
-	NodeVal() : subtreeSize(1) {}
+	long long val, subtreeVal;
+	NodeVal(long long val = 1) : val(val), subtreeVal(val) {}
 	// update should be symmetric with respect to lchild and rchild if we wish to have the ability to link any 2 nodes
 	// i.e. update(x, y) == update(y, x) 
 	void update(NodeVal* lChild, NodeVal* rChild) {
-		subtreeSize = 1 + (lChild ? lChild->subtreeSize : 0) + (rChild ? rChild->subtreeSize : 0);
+		subtreeVal = val + (lChild ? lChild->subtreeVal : 0) + (rChild ? rChild->subtreeVal : 0);
 	}
 };
 
@@ -22,10 +23,10 @@ struct Node {
 	array<Node*, 2> child{};
 	Node* splayTreeParent = nullptr;
 	Node* pathParentPointer = nullptr;
-	NodeVal* val;
+	NodeVal* nodeVal;
 	bool reverse = false;
 
-	Node(int id, NodeVal* _val) : id(id), val(_val) {}
+	Node(int id, NodeVal* nodeVal) : id(id), nodeVal(nodeVal) {}
 	bool getSide() {
 		return splayTreeParent ? splayTreeParent->child[1] == this : false;
 	}
@@ -68,8 +69,12 @@ struct Node {
 	Node* attach(Node* node, int side) {
 		if (node) node->splayTreeParent = this;
 		child[side] = node;
-		val->update((child[0] ? child[0]->val : nullptr), (child[1] ? child[1]->val : nullptr));
+		update();
 		return this;
+	}
+
+	void update() {
+		nodeVal->update((child[0] ? child[0]->nodeVal : nullptr), (child[1] ? child[1]->nodeVal : nullptr));
 	}
 
 	void detachChild(bool b) {
@@ -77,6 +82,7 @@ struct Node {
 		child[b]->pathParentPointer = this;
 		child[b]->splayTreeParent = nullptr;
 		child[b] = nullptr;
+		update();
 	}
 
 	Node* findMax() {
@@ -149,17 +155,20 @@ struct LinkCutTree {
 		return access(v)->id;
 	}
 
-	int pathAggregate(int id) {
+	NodeVal* pathAggregate(int id) {
 		Node* u = nodes[id];
 		access(u);
-		return u->id;
+		return u->nodeVal;
 	}
 
 	Node* getNode(int id) {
 		return nodes[id];
 	}
 
-private:
+	Node* access(int id) {
+		return access(nodes[id]);
+	}
+
 	//Returns the last path Parent Pointer
 	Node* access(Node* u) {
 		u->splay();

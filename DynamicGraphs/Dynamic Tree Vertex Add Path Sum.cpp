@@ -10,7 +10,7 @@ using namespace std;
 
 struct NodeVal {
 	long long val, subtreeVal;
-	NodeVal(long long val) : val(val), subtreeVal(val) {}
+	NodeVal(long long val = 1) : val(val), subtreeVal(val) {}
 	// update should be symmetric with respect to lchild and rchild if we wish to have the ability to link any 2 nodes
 	// i.e. update(x, y) == update(y, x) 
 	void update(NodeVal* lChild, NodeVal* rChild) {
@@ -23,10 +23,10 @@ struct Node {
 	array<Node*, 2> child{};
 	Node* splayTreeParent = nullptr;
 	Node* pathParentPointer = nullptr;
-	NodeVal* val;
+	NodeVal* nodeVal;
 	bool reverse = false;
 
-	Node(int id, NodeVal* _val) : id(id), val(_val) {}
+	Node(int id, NodeVal* nodeVal) : id(id), nodeVal(nodeVal) {}
 	bool getSide() {
 		return splayTreeParent ? splayTreeParent->child[1] == this : false;
 	}
@@ -74,7 +74,7 @@ struct Node {
 	}
 
 	void update() {
-		val->update((child[0] ? child[0]->val : nullptr), (child[1] ? child[1]->val : nullptr));
+		nodeVal->update((child[0] ? child[0]->nodeVal : nullptr), (child[1] ? child[1]->nodeVal : nullptr));
 	}
 
 	void detachChild(bool b) {
@@ -82,6 +82,7 @@ struct Node {
 		child[b]->pathParentPointer = this;
 		child[b]->splayTreeParent = nullptr;
 		child[b] = nullptr;
+		update();
 	}
 
 	Node* findMax() {
@@ -154,10 +155,10 @@ struct LinkCutTree {
 		return access(v)->id;
 	}
 
-	int pathAggregate(int id) {
+	NodeVal* pathAggregate(int id) {
 		Node* u = nodes[id];
 		access(u);
-		return u->id;
+		return u->nodeVal;
 	}
 
 	Node* getNode(int id) {
@@ -213,17 +214,16 @@ int main() {
 		else if (tp == 1) {
 			long long p, x; cin >> p >> x;
 			lct.access(p);
-			lct.nodes[p]->val->val += x;
+			lct.nodes[p]->nodeVal->val += x;
 			lct.nodes[p]->update();
 		} 
 		else {
 			int u, v; cin >> u >> v;
-			cout << "root: " << lct.findRoot(u);
-			int lca = lct.LCA(u, v); cout << " lca: " << lca;
-			long long U = lct.nodes[lct.pathAggregate(u)]->val->subtreeVal; cout << " U: " << U;
-			long long V = lct.nodes[lct.pathAggregate(v)]->val->subtreeVal; cout << " V: " << V;
-			long long LCA = lct.nodes[lct.pathAggregate(lca)]->val->subtreeVal; cout << " LCA: " << LCA;
-			long long ans =  U + V - 2 * LCA + lct.nodes[lca]->val->val; cout << " ans: " << ans;
+			int lca = lct.LCA(u, v);
+			long long U = lct.pathAggregate(u)->subtreeVal; 
+			long long V = lct.pathAggregate(v)->subtreeVal; 
+			long long LCA = lct.pathAggregate(lca)->subtreeVal; 
+			long long ans =  U + V - 2 * LCA + lct.nodes[lca]->nodeVal->val;
 			cout << ans << "\n";
 		}
 	}
