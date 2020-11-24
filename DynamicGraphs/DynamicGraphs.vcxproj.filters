@@ -24,6 +24,9 @@
     <ClCompile Include="LinkCutTree.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="DYNALCA - Dynamic LCA.cpp">
+      <Filter>Source Files\Test Problems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SplayTree.h">
