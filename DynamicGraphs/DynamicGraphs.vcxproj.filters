@@ -24,7 +24,7 @@
     <ClCompile Include="LinkCutTree.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="Dynamic Tree Vertex Add Path Sum.cpp">
+    <ClCompile Include="DYNALCA - Dynamic LCA.cpp">
       <Filter>Source Files\Test Problems</Filter>
     </ClCompile>
   </ItemGroup>
