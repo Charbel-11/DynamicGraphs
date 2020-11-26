@@ -8,12 +8,13 @@ typedef long long ll;
 //Building the treap in O(n) doesn't make it that much faster than using the insert 
 //at the end of the array n times
 struct TreapNode {
-	int priority, size;
+	int priority, size, from, to;
 	ll val, sum;
 	TreapNode* l, * r, * p;
 
-	TreapNode(ll v) :val(v), priority(rand()), l(NULL), r(NULL), p(NULL), size(1), sum(val) {}
-	TreapNode() : TreapNode(0) {}
+	TreapNode(int _from, int _to, ll _v = 0) :val(_v), priority(rand()), 
+		l(NULL), r(NULL), p(NULL), size(1), sum(val), from(_from), to(_to) {}
+	TreapNode() : TreapNode(0, 0, 0) {}
 
 	void updateSize() {
 		size = 1 + (l ? l->size : 0) + (r ? r->size : 0);
