@@ -104,7 +104,7 @@ ll treapRangeQuery(TreapNode*& t, int l, int r) {
 }
 
 void treapFindIdx(TreapNode*& cur, int& idx) {
-	idx = sz(cur->l); while (cur->p != nullptr) {
+	idx = sz(cur->l) + 1; while (cur->p != nullptr) {
 		if (cur->p->l == cur) { cur = cur->p; continue; }
 		idx += 1 + sz(cur->p->l); cur = cur->p;
 	}
