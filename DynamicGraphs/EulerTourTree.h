@@ -75,20 +75,16 @@ struct EulerTourTree {
 
 		TreapNode* curLeft = nullptr, * right = nullptr;
 		treapSplit(p.first, curLeft, right, sID - 1);
-		treapErase(right, 0);
+		treapErase(right, 1);
 
 		TreapNode* left = nullptr, * childTree = nullptr;
 		treapSplit(curLeft, left, childTree, fID - 1);
-		treapErase(childTree, 0);
+		treapErase(childTree, 1);
 
 		TreapNode* root = nullptr;
 		treapMerge(root, left, right);
 
 		edges.erase({ u, v }); edges.erase({ v, u });
-	}
-
-	ll subtreeAggregate(int cur) {
-		return 0;
 	}
 
 private:	
