@@ -148,6 +148,8 @@
     <ClInclude Include="SplayTree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GraphGenerator.h" />
+    <ClCompile Include="GraphGeneratorTest.cpp" />
     <ClCompile Include="LinkCutTree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

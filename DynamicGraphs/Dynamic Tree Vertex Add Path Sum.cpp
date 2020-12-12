@@ -9,12 +9,12 @@
 using namespace std;
 
 struct NodeVal {
-	long long val, subtreeVal;
-	NodeVal(long long val = 1) : val(val), subtreeVal(val) {}
+	long long val, splaySubtreeVal;
+	NodeVal(long long val = 1) : val(val), splaySubtreeVal(val) {}
 	// update should be symmetric with respect to lchild and rchild if we wish to have the ability to link any 2 nodes
 	// i.e. update(x, y) == update(y, x) 
 	void update(NodeVal* lChild, NodeVal* rChild) {
-		subtreeVal = val + (lChild ? lChild->subtreeVal : 0) + (rChild ? rChild->subtreeVal : 0);
+		splaySubtreeVal = val + (lChild ? lChild->splaySubtreeVal : 0) + (rChild ? rChild->splaySubtreeVal : 0);
 	}
 };
 
@@ -220,9 +220,9 @@ int main() {
 		else {
 			int u, v; cin >> u >> v;
 			int lca = lct.LCA(u, v);
-			long long U = lct.pathAggregate(u)->subtreeVal; 
-			long long V = lct.pathAggregate(v)->subtreeVal; 
-			long long LCA = lct.pathAggregate(lca)->subtreeVal; 
+			long long U = lct.pathAggregate(u)->splaySubtreeVal; 
+			long long V = lct.pathAggregate(v)->splaySubtreeVal; 
+			long long LCA = lct.pathAggregate(lca)->splaySubtreeVal; 
 			long long ans =  U + V - 2 * LCA + lct.nodes[lca]->nodeVal->val;
 			cout << ans << "\n";
 		}

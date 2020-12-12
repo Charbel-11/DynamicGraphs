@@ -10,11 +10,13 @@ using namespace std;
 
 struct NodeVal {
 	long long val, splaySubtreeVal;
-	NodeVal(long long val = 1) : val(val), splaySubtreeVal(val) {}
+	long long sm, vir; // subtree
+	NodeVal(long long val = 1) : val(val), splaySubtreeVal(val), sm(val), vir(0) {}
 	// update should be symmetric with respect to lchild and rchild if we wish to have the ability to link any 2 nodes
 	// i.e. update(x, y) == update(y, x) 
 	void update(NodeVal* lChild, NodeVal* rChild) {
 		splaySubtreeVal = val + (lChild ? lChild->splaySubtreeVal : 0) + (rChild ? rChild->splaySubtreeVal : 0);
+		sm = val + vir + (lChild ? lChild->sm : 0) + (rChild ? rChild->sm : 0);
 	}
 };
 
@@ -74,11 +76,14 @@ struct Node {
 	}
 
 	void update() {
+		if (child[0]) child[0]->applyReverseLazy();
+		if (child[1]) child[1]->applyReverseLazy();
 		nodeVal->update((child[0] ? child[0]->nodeVal : nullptr), (child[1] ? child[1]->nodeVal : nullptr));
 	}
 
 	void detachChild(bool b) {
 		if (!child[b]) { return; }
+		this->nodeVal->vir += child[b]->nodeVal->sm; // subtree
 		child[b]->pathParentPointer = this;
 		child[b]->splayTreeParent = nullptr;
 		child[b] = nullptr;
@@ -169,6 +174,13 @@ struct LinkCutTree {
 		return access(nodes[id]);
 	}
 
+	Node* makeRoot(int id) {
+		access(id);
+		nodes[id]->reverse ^= 1;
+		access(id);
+		return nodes[id];
+	}
+
 	//Returns the last path Parent Pointer
 	Node* access(Node* u) {
 		u->splay();
@@ -180,6 +192,7 @@ struct LinkCutTree {
 			curPP->splay();
 			curPP->detachChild(1);
 			curPP->attach(u, 1);
+			if (u->pathParentPointer) u->pathParentPointer->nodeVal->vir -= u->nodeVal->sm; // subtree
 			u->pathParentPointer = nullptr;
 			u->splay();
 		}
@@ -187,3 +200,39 @@ struct LinkCutTree {
 		return curPP;
 	}
 };
+
+
+int main() {
+	int n, q;
+	cin >> n >> q;
+	LinkCutTree lct;
+	for (int i = 0; i < n; i++) {
+		long long a; cin >> a;
+		lct.addNode(new NodeVal(a));
+	}
+	for (int i = 0; i < n - 1; i++) {
+		int u, v; cin >> u >> v;
+		lct.link(u, v);
+	}
+	while (q--) {
+		int tp; cin >> tp;
+		if (tp == 0) {
+			int u, v, w, x; cin >> u >> v >> w >> x;
+			lct.cut(u, v);
+			lct.link(w, x);
+		}
+		else if (tp == 1) {
+			long long p, x; cin >> p >> x;
+			lct.makeRoot(p);
+			lct.nodes[p]->nodeVal->val += x;
+			lct.nodes[p]->update();
+		}
+		else {
+			int v, p; cin >> v >> p;
+			lct.makeRoot(p);
+			lct.access(v);
+			long long ans = lct.nodes[v]->nodeVal->vir + lct.nodes[v]->nodeVal->val;
+			cout << ans << "\n";
+		}
+	}
+}

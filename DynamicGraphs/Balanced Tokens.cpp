@@ -6,15 +6,25 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <set>
+#include <fstream>
 using namespace std;
 
 struct NodeVal {
-	long long val, splaySubtreeVal;
-	NodeVal(long long val = 1) : val(val), splaySubtreeVal(val) {}
+	long long val, excess, deficit; // excess and deficit in open
+	NodeVal(long long val = 1) : val(val), excess(val), deficit(1 - val) {}
 	// update should be symmetric with respect to lchild and rchild if we wish to have the ability to link any 2 nodes
-	// i.e. update(x, y) == update(y, x) 
+	// i.e. update(x, y) == update(y, x)
 	void update(NodeVal* lChild, NodeVal* rChild) {
-		splaySubtreeVal = val + (lChild ? lChild->splaySubtreeVal : 0) + (rChild ? rChild->splaySubtreeVal : 0);
+		deficit =  (lChild ? lChild->deficit : 0);
+		excess = (rChild ? rChild->excess : 0);
+		long long tmp = (rChild ? rChild->deficit : 0) + (1 - val) - (lChild ? lChild->excess : 0) - val;
+		if (tmp > 0) {
+			deficit += tmp;
+		}
+		else if(tmp < 0) {
+			excess += abs(tmp);
+		}
 	}
 };
 
@@ -34,8 +44,8 @@ struct Node {
 		if (!reverse) { return; }
 		reverse = false;
 		swap(child[0], child[1]);
-		if (child[0]) { child[0]->reverse = !child[0]->reverse; }
-		if (child[1]) { child[1]->reverse = !child[1]->reverse; }
+		if (child[0]) { child[0]->reverse = !child[0]->reverse;}
+		if (child[1]) { child[1]->reverse = !child[1]->reverse;}
 	}
 	Node* splay() {
 		stack<Node*> ancestors;
@@ -155,6 +165,13 @@ struct LinkCutTree {
 		return access(v)->id;
 	}
 
+	Node* makeRoot(int id) {
+		access(id); 
+		nodes[id]->reverse ^= 1; 
+		access(id);
+		return nodes[id];
+	}
+
 	NodeVal* pathAggregate(int id) {
 		Node* u = nodes[id];
 		access(u);
@@ -187,3 +204,65 @@ struct LinkCutTree {
 		return curPP;
 	}
 };
+
+
+int main() {
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(0);
+	std::cout.tie(0);
+	int n, q; cin >> n >> q;
+	//ofstream cout("out.txt");
+	LinkCutTree lct;
+	for (int i = 0; i < n; i++) {
+		char c; cin >> c;
+		lct.addNode(new NodeVal(c  == '(' ? 1 : 0));
+	}
+
+	set<pair<int, int>> st;
+
+	while (q--) {
+		string tp; cin >> tp;
+		if (tp == "connect") {
+			int u, v; cin >> u >> v; u--, v--;
+			if (lct.findRoot(u) == lct.findRoot(v)) {
+				cout << "no\n";
+			}
+			else {
+				lct.link(u, v);
+				cout << "yes\n";
+				st.insert({ min(u, v), max(u, v) });
+			}
+		}
+		else if (tp == "disconnect") {
+			int u, v; cin >> u >> v; u--, v--;
+			if (st.count({ min(u, v), max(u, v) })) {
+				lct.cut(u, v);
+				cout << "yes\n";
+				st.erase({ min(u, v), max(u, v) });
+			}
+			else {
+				cout << "no\n";
+			}
+		}
+		else if (tp == "toggle") {
+			int u; cin >> u; u--;
+			lct.access(u);
+			lct.nodes[u]->nodeVal->val ^= 1;
+			lct.nodes[u]->update();
+		}
+		else {
+			int u, v; cin >> u >> v; u--, v--;
+			if (lct.findRoot(u) == lct.findRoot(v)) {
+				lct.makeRoot(u);
+				lct.access(v);
+				auto val = lct.nodes[v]->nodeVal;
+				long long ans = val->deficit + val->excess;
+				if (ans == 0) cout << "balanced\n";
+				else cout << ans << "\n";
+			}
+			else {
+				cout << "invalid\n";
+			}
+		}
+	}
+}
