@@ -22,15 +22,13 @@ struct GraphGenerator {
 
 private:
 	static string GetTwoNodesNotConnected(int  sizeOfTree, LinkCutTree &lct, vector<pair<int, int>> &edges, mt19937 &rng) {
-		while (true) {
-			int u = rng() % sizeOfTree;
-			int v = rng() % sizeOfTree;
-			if (lct.findRoot(u) != lct.findRoot(v)) {
-				edges.push_back({ u, v });
-				lct.link(u, v);
-				return to_string(u) + " " + to_string(v);
-			}
+		int u = rng() % sizeOfTree;
+		int v = rng() % sizeOfTree;
+		if (lct.findRoot(u) != lct.findRoot(v)) {
+			edges.push_back({ u, v });
+			lct.link(u, v);
 		}
+		return to_string(u) + " " + to_string(v);
 	}
 
 	static string GetTwoNodesConnected(int  sizeOfTree, LinkCutTree& lct, vector<pair<int, int>>& edges, mt19937& rng) {
