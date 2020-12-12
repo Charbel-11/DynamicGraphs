@@ -48,8 +48,8 @@ private:
 		vector<pair<int, int>> edges;
 		mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 		for (int q = 0; q < numberOfQueries; q++) {
-			int decision = rng() % 5;
-			if (decision < 3) {
+			int decision = rng() % 4;
+			if (decision < 2) {
 				// add edge
 				if (edges.size() == sizeOfTree - 1) {
 					q--;
@@ -57,7 +57,7 @@ private:
 				}
 				fout << "1 "<<GetTwoNodesNotConnected(sizeOfTree, lct, edges, rng)<<"\n";
 			}
-			else if (decision == 3) {
+			else if (decision == 2) {
 				// remove edges
 				if (edges.size() == 0) {
 					q--;
@@ -70,5 +70,6 @@ private:
 				fout << "3 " << rng() % sizeOfTree << " "<< rng() % sizeOfTree << "\n";
 			}
 		}
+		for (int i = 0; i < sizeOfTree; i++) delete lct.nodes[i];
 	}
 };
