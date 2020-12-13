@@ -27,7 +27,7 @@
     <ClCompile Include="GraphGenerator.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphGeneratorTest.cpp">
+    <ClCompile Include="LinkCutTree_TimeTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

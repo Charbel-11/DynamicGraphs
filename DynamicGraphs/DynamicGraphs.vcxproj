@@ -149,8 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphGenerator.h" />
-    <ClCompile Include="GraphGeneratorTest.cpp" />
     <ClCompile Include="LinkCutTree.h" />
+    <ClCompile Include="LinkCutTree_TimeTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
