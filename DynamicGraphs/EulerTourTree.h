@@ -1,7 +1,7 @@
 #pragma once
 #include "ImplicitTreap.h"
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include <assert.h>
 using namespace std;
 
@@ -17,7 +17,7 @@ struct Forest {
 
 struct EulerTourTree {
 	vector<TreapNode*> self; int n;
-	unordered_map<pair<int, int>, pair<TreapNode*, TreapNode*>> edges;
+	map<pair<int, int>, pair<TreapNode*, TreapNode*>> edges;
 
 	EulerTourTree(Forest F) : n(F.n), self(F.n) {
 		vector<bool> vis(n, false);
@@ -31,12 +31,12 @@ struct EulerTourTree {
 		treapInsert(root, curN); self[cur] = curN;
 		vis[cur] = true;
 
-		for (int& e : F.adj[cur]) if(e != par) {
+		for (int& e : F.adj[cur]) if (e != par) {
 			TreapNode* inE = new TreapNode(cur, e);
 			treapInsert(root, inE);
 			eulerTour(F, root, vis, e, cur);
 			TreapNode* outE = new TreapNode(e, cur);
-			treapInsert(root, outE); 
+			treapInsert(root, outE);
 			edges[{cur, e}] = edges[{e, cur}] = { inE, outE };
 		}
 	}
@@ -87,7 +87,11 @@ struct EulerTourTree {
 		edges.erase({ u, v }); edges.erase({ v, u });
 	}
 
-private:	
+	ll subtreeAggregate(int cur) {
+		return 0;
+	}
+
+private:
 
 	TreapNode* findRoot(int cur) {
 		TreapNode* curN = self[cur];
